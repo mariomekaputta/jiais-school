@@ -13,32 +13,39 @@ Landing page satu halaman untuk sekolah fiktif **Jakarta International AI School
 
 | File | Isi |
 |---|---|
-| `index.html` | Header + navigasi, Hero, Tentang, Jenjang (SD/SMP/SMA), Keunggulan, CTA WhatsApp, Footer |
-| `i18n.js` | Kamus dan logika bahasa Indonesia/English untuk website dan teks UI widget |
-| `chat.js` | Widget chat Asisten JIAIS: buka/tutup, riwayat (localStorage), indikator mengetik, 3 pertanyaan contoh, kirim riwayat ke `/api/chat` |
-| `server.js` | Server Node: sajikan file statis (whitelist) + `POST /api/chat` → Gemini. API key hanya di server |
+| `public/index.html` | Halaman: header + navigasi, Hero, Tentang, Jenjang (SD/SMP/SMA), Keunggulan, CTA WhatsApp, Footer, widget chat |
+| `public/style.css` | Token warna terang/gelap, layout grid/flex, breakpoint 900px (tablet) dan 720px (HP) |
+| `public/i18n.js` | Kamus dan logika bahasa Indonesia/English |
+| `public/theme.js` | Tombol mode terang/gelap |
+| `public/chat.js` | Widget chat Asisten JIAIS: riwayat, indikator mengetik, pertanyaan contoh, kuota harian, tombol WA |
+| `lib/chat-core.js` | Logika chat bersama: validasi, prompt per bahasa, rate limit, panggilan Gemini. API key hanya di sini (server) |
+| `api/chat.js` | Vercel Serverless Function `POST /api/chat` |
+| `server.js` | Server lokal: sajikan `public/` (whitelist) + `POST /api/chat` |
+| `vercel.json` | Konfigurasi Vercel: `public/` sebagai output, sertakan prompt + FAQ ke function |
 | `prompts/system-prompt.id.md` | Instruksi Asisten JIAIS bahasa Indonesia |
 | `prompts/system-prompt.en.md` | Instruksi Asisten JIAIS bahasa Inggris (menerjemahkan data FAQ berbahasa Indonesia) |
-| `theme.js` | Tombol mode terang/gelap |
+| `FAQ.md` | 20 tanya-jawab fiktif; juga dipakai sebagai data asisten |
 | `package.json` | `npm start` → `node server.js` |
 | `.env.example` | Contoh `.env` (file `.env` asli di-ignore git) |
-| `style.css` | Variabel warna, layout grid/flex, breakpoint 900px (tablet) dan 720px (HP) |
 | `.claude/launch.json` | Konfigurasi preview: `node server.js` (port 3000) |
-| `FAQ.md` | 20 tanya-jawab fiktif: pendaftaran, tes, biaya per jenjang, beasiswa, jam sekolah, seragam, ekskul, antar jemput, kontak |
 | `progress.md` | Dokumen ini |
 
-## Menjalankan preview
+## Menjalankan lokal
 
 1. Salin `.env.example` menjadi `.env`, isi `GEMINI_API_KEY`.
-2. Jalankan:
+2. Jalankan `npm start`, lalu buka http://localhost:3000.
 
-```bash
-npm start
-```
+Server hanya listen di `127.0.0.1` (set `HOST=0.0.0.0` bila perlu diakses dari jaringan).
 
-Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0.0.0.0` bila perlu diakses dari jaringan).
+> Jangan pakai `python3 -m http.server`: server itu menyajikan semua file, termasuk `.env`.
 
-> Jangan pakai `python3 -m http.server` lagi: server itu menyajikan semua file, termasuk `.env`.
+## Deploy ke Vercel
+
+1. Import repo GitHub ke Vercel, Framework Preset: **Other** (tanpa build command).
+2. Project Settings → Environment Variables → tambah `GEMINI_API_KEY` (Production, Preview).
+3. Redeploy. Vercel menyajikan `public/` sebagai website dan `api/chat.js` sebagai function.
+
+Catatan: rate limit 20 req/menit per IP disimpan di memori per instance function, jadi di Vercel tidak benar-benar global. Untuk produksi, pakai store bersama (mis. Upstash Redis / Vercel KV) dan pasang budget alert di Google Cloud.
 
 ## Yang sudah selesai
 
@@ -82,3 +89,4 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - `Add daily 5-question quota per visitor` — kuota harian di browser + tampilan sisa kuota
 - `Add Indonesian/English localization for the website` — i18n.js + tombol ID/EN
 - `Add dark mode and per-language assistant prompts` — theme.js, token warna, prompt ID/EN
+- `Make project deployable on Vercel` — public/, api/chat.js, lib/chat-core.js, vercel.json
