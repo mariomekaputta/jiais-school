@@ -16,14 +16,18 @@
         <span class="brand-mark" aria-hidden="true">AI</span>
         <span class="brand-text">JIAIS</span>
       </a>
-      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Buka menu">
+      <div class="lang-switch" role="group" aria-label="Pilih bahasa" data-i18n-attr="aria-label:lang.label">
+        <button type="button" data-lang="id" aria-pressed="true" lang="id">ID</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Buka menu" data-i18n-attr="aria-label:nav.toggle">
       <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true"><span></span></label>
-      <nav class="nav-menu" aria-label="Navigasi utama">
-        <a href="#tentang">Tentang</a>
-        <a href="#jenjang">Jenjang</a>
-        <a href="#keunggulan">Keunggulan</a>
-        <a href="#kontak">Kontak</a>
-        <a href="https://wa.me/6281200002026" class="btn btn-small" target="_blank" rel="noopener">Daftar</a>
+      <nav class="nav-menu" aria-label="Navigasi utama" data-i18n-attr="aria-label:nav.label">
+        <a href="#tentang" data-i18n="nav.about">Tentang</a>
+        <a href="#jenjang" data-i18n="nav.levels">Jenjang</a>
+        <a href="#keunggulan" data-i18n="nav.features">Keunggulan</a>
+        <a href="#kontak" data-i18n="nav.contact">Kontak</a>
+        <a href="https://wa.me/6281200002026" class="btn btn-small" target="_blank" rel="noopener" data-i18n="nav.register" data-i18n-wa="wa.register">Daftar</a>
       </nav>
     </div>
   </header>
@@ -33,30 +37,30 @@
     <section id="beranda" class="hero">
       <div class="container hero-grid">
         <div class="hero-text">
-          <p class="eyebrow">Penerimaan Siswa Baru 2027/2028 dibuka</p>
+          <p class="eyebrow" data-i18n="hero.eyebrow">Penerimaan Siswa Baru 2027/2028 dibuka</p>
           <h1>Jakarta International <span class="accent">AI School</span></h1>
-          <p class="lead">
+          <p class="lead" data-i18n="hero.lead">
             Sekolah jenjang SD, SMP, dan SMA yang memadukan kurikulum internasional
             dengan literasi kecerdasan buatan — agar anak tumbuh kritis, kreatif,
             dan berkarakter di era AI.
           </p>
           <div class="hero-actions">
-            <a href="https://wa.me/6281200002026?text=Halo%20Admin%20JIAIS%2C%20saya%20ingin%20info%20pendaftaran." class="btn" target="_blank" rel="noopener">Hubungi Admin via WhatsApp</a>
-            <a href="#jenjang" class="btn btn-ghost">Lihat Jenjang</a>
+            <a href="https://wa.me/6281200002026?text=Halo%20Admin%20JIAIS%2C%20saya%20ingin%20info%20pendaftaran." class="btn" target="_blank" rel="noopener" data-i18n="hero.ctaWa" data-i18n-wa="wa.register">Hubungi Admin via WhatsApp</a>
+            <a href="#jenjang" class="btn btn-ghost" data-i18n="hero.ctaLevels">Lihat Jenjang</a>
           </div>
         </div>
         <div class="hero-card" aria-hidden="true">
           <div class="stat">
             <strong>3</strong>
-            <span>Jenjang pendidikan</span>
+            <span data-i18n="hero.stat1">Jenjang pendidikan</span>
           </div>
           <div class="stat">
             <strong>1:15</strong>
-            <span>Rasio guru dan siswa</span>
+            <span data-i18n="hero.stat2">Rasio guru dan siswa</span>
           </div>
           <div class="stat">
             <strong>100%</strong>
-            <span>Kelas berbasis proyek</span>
+            <span data-i18n="hero.stat3">Kelas berbasis proyek</span>
           </div>
         </div>
       </div>
@@ -65,9 +69,9 @@
     <!-- Tentang -->
     <section id="tentang" class="section">
       <div class="container narrow center">
-        <p class="eyebrow">Tentang Kami</p>
-        <h2>Belajar bersama AI, tetap berpusat pada manusia</h2>
-        <p>
+        <p class="eyebrow" data-i18n="about.eyebrow">Tentang Kami</p>
+        <h2 data-i18n="about.title">Belajar bersama AI, tetap berpusat pada manusia</h2>
+        <p data-i18n="about.body">
           JIAIS percaya teknologi adalah alat, bukan tujuan. Kami mengajarkan siswa
           memahami cara kerja AI, menggunakannya secara etis, dan tetap mengasah
           kemampuan dasar: membaca, berhitung, berpikir kritis, serta berkolaborasi.
@@ -79,27 +83,27 @@
     <section id="jenjang" class="section section-alt">
       <div class="container">
         <div class="section-head center">
-          <p class="eyebrow">Jenjang Pendidikan</p>
-          <h2>Dari SD hingga SMA</h2>
+          <p class="eyebrow" data-i18n="levels.eyebrow">Jenjang Pendidikan</p>
+          <h2 data-i18n="levels.title">Dari SD hingga SMA</h2>
         </div>
         <div class="cards">
           <article class="card">
             <span class="badge badge-sd">SD</span>
-            <h3>Sekolah Dasar</h3>
-            <p class="meta">Kelas 1 – 6</p>
-            <p>Fondasi literasi, numerasi, dan rasa ingin tahu. Mengenal komputasi lewat permainan dan cerita.</p>
+            <h3 data-i18n="levels.sd.title">Sekolah Dasar</h3>
+            <p class="meta" data-i18n="levels.sd.meta">Kelas 1 – 6</p>
+            <p data-i18n="levels.sd.body">Fondasi literasi, numerasi, dan rasa ingin tahu. Mengenal komputasi lewat permainan dan cerita.</p>
           </article>
           <article class="card">
             <span class="badge badge-smp">SMP</span>
-            <h3>Sekolah Menengah Pertama</h3>
-            <p class="meta">Kelas 7 – 9</p>
-            <p>Logika pemrograman, sains data dasar, dan proyek kolaboratif untuk memecahkan masalah nyata.</p>
+            <h3 data-i18n="levels.smp.title">Sekolah Menengah Pertama</h3>
+            <p class="meta" data-i18n="levels.smp.meta">Kelas 7 – 9</p>
+            <p data-i18n="levels.smp.body">Logika pemrograman, sains data dasar, dan proyek kolaboratif untuk memecahkan masalah nyata.</p>
           </article>
           <article class="card">
             <span class="badge badge-sma">SMA</span>
-            <h3>Sekolah Menengah Atas</h3>
-            <p class="meta">Kelas 10 – 12</p>
-            <p>Pendalaman AI, etika teknologi, riset mandiri, dan persiapan kuliah di dalam maupun luar negeri.</p>
+            <h3 data-i18n="levels.sma.title">Sekolah Menengah Atas</h3>
+            <p class="meta" data-i18n="levels.sma.meta">Kelas 10 – 12</p>
+            <p data-i18n="levels.sma.body">Pendalaman AI, etika teknologi, riset mandiri, dan persiapan kuliah di dalam maupun luar negeri.</p>
           </article>
         </div>
       </div>
@@ -109,25 +113,25 @@
     <section id="keunggulan" class="section">
       <div class="container">
         <div class="section-head center">
-          <p class="eyebrow">Keunggulan</p>
-          <h2>Kenapa memilih JIAIS?</h2>
+          <p class="eyebrow" data-i18n="features.eyebrow">Keunggulan</p>
+          <h2 data-i18n="features.title">Kenapa memilih JIAIS?</h2>
         </div>
         <ul class="features">
           <li>
-            <h3>Kurikulum Internasional</h3>
-            <p>Standar global dengan pengantar bilingual Indonesia–Inggris.</p>
+            <h3 data-i18n="features.f1.title">Kurikulum Internasional</h3>
+            <p data-i18n="features.f1.body">Standar global dengan pengantar bilingual Indonesia–Inggris.</p>
           </li>
           <li>
-            <h3>Literasi AI Sejak Dini</h3>
-            <p>Siswa belajar memakai, memahami, dan mengevaluasi AI secara bertanggung jawab.</p>
+            <h3 data-i18n="features.f2.title">Literasi AI Sejak Dini</h3>
+            <p data-i18n="features.f2.body">Siswa belajar memakai, memahami, dan mengevaluasi AI secara bertanggung jawab.</p>
           </li>
           <li>
-            <h3>Pembelajaran Berbasis Proyek</h3>
-            <p>Setiap semester ditutup dengan pameran karya siswa.</p>
+            <h3 data-i18n="features.f3.title">Pembelajaran Berbasis Proyek</h3>
+            <p data-i18n="features.f3.body">Setiap semester ditutup dengan pameran karya siswa.</p>
           </li>
           <li>
-            <h3>Karakter &amp; Etika</h3>
-            <p>Pendidikan nilai, empati, dan kewargaan digital menjadi inti kurikulum.</p>
+            <h3 data-i18n="features.f4.title">Karakter &amp; Etika</h3>
+            <p data-i18n="features.f4.body">Pendidikan nilai, empati, dan kewargaan digital menjadi inti kurikulum.</p>
           </li>
         </ul>
       </div>
@@ -136,18 +140,18 @@
     <!-- CTA / Kontak -->
     <section id="kontak" class="section cta">
       <div class="container narrow center">
-        <h2>Siap bergabung dengan JIAIS?</h2>
-        <p>Tanyakan jadwal tur sekolah, biaya, dan pendaftaran langsung ke admin kami.</p>
-        <a href="https://wa.me/6281200002026?text=Halo%20Admin%20JIAIS%2C%20saya%20ingin%20info%20pendaftaran." class="btn btn-light" target="_blank" rel="noopener">WhatsApp 0812-0000-2026</a>
+        <h2 data-i18n="cta.title">Siap bergabung dengan JIAIS?</h2>
+        <p data-i18n="cta.body">Tanyakan jadwal tur sekolah, biaya, dan pendaftaran langsung ke admin kami.</p>
+        <a href="https://wa.me/6281200002026?text=Halo%20Admin%20JIAIS%2C%20saya%20ingin%20info%20pendaftaran." class="btn btn-light" target="_blank" rel="noopener" data-i18n-wa="wa.register">WhatsApp 0812-0000-2026</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <p><strong>Jakarta International AI School</strong><br>SD · SMP · SMA</p>
-      <p>Admin WA: <a href="https://wa.me/6281200002026" target="_blank" rel="noopener">0812-0000-2026</a></p>
-      <p class="muted">&copy; 2026 JIAIS. Sekolah fiktif untuk keperluan demo.</p>
+      <p data-i18n-html="footer.levels"><strong>Jakarta International AI School</strong><br>SD · SMP · SMA</p>
+      <p><span data-i18n="footer.admin">Admin WA:</span> <a href="https://wa.me/6281200002026" target="_blank" rel="noopener" data-i18n-wa="wa.general">0812-0000-2026</a></p>
+      <p class="muted" data-i18n="footer.note">&copy; 2026 JIAIS. Sekolah fiktif untuk keperluan demo.</p>
     </div>
   </footer>
 
@@ -157,17 +161,17 @@
       <header class="chat-header">
         <span class="chat-avatar" aria-hidden="true">AI</span>
         <div class="chat-heading">
-          <h2 id="chat-title">Asisten JIAIS</h2>
-          <p class="chat-status">Online</p>
+          <h2 id="chat-title" data-i18n="chat.title">Asisten JIAIS</h2>
+          <p class="chat-status" data-i18n="chat.status">Online</p>
         </div>
         <button type="button" class="chat-icon-btn chat-expand-btn" id="chat-expand" aria-pressed="false" aria-label="Perbesar jendela chat" title="Perbesar">
           <svg class="icon-expand" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>
           <svg class="icon-shrink" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10h-6V4M4 14h6v6M14 10l7-7M10 14l-7 7"/></svg>
         </button>
-        <button type="button" class="chat-icon-btn" id="chat-clear" aria-label="Hapus riwayat percakapan" title="Hapus riwayat">
+        <button type="button" class="chat-icon-btn" id="chat-clear" aria-label="Hapus riwayat percakapan" title="Hapus riwayat" data-i18n-attr="aria-label:chat.clear; title:chat.clearShort">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
         </button>
-        <button type="button" class="chat-icon-btn" id="chat-close" aria-label="Tutup chat" title="Tutup">
+        <button type="button" class="chat-icon-btn" id="chat-close" aria-label="Tutup chat" title="Tutup" data-i18n-attr="aria-label:chat.close; title:chat.closeShort">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </header>
@@ -175,19 +179,19 @@
       <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
 
       <div class="chat-suggestions" id="chat-suggestions">
-        <button type="button" class="chip">Kapan pendaftaran dibuka?</button>
-        <button type="button" class="chip">Berapa biaya SPP per jenjang?</button>
-        <button type="button" class="chip">Apakah ada beasiswa?</button>
+        <button type="button" class="chip" data-i18n="chat.suggest1">Kapan pendaftaran dibuka?</button>
+        <button type="button" class="chip" data-i18n="chat.suggest2">Berapa biaya SPP per jenjang?</button>
+        <button type="button" class="chip" data-i18n="chat.suggest3">Apakah ada beasiswa?</button>
       </div>
 
       <div class="chat-limit" id="chat-limit" role="status" hidden>
-        <p>Kuota tanya AI hari ini habis, silakan hubungi admin</p>
+        <p data-i18n="chat.quotaEmptyNotice">Kuota tanya AI hari ini habis, silakan hubungi admin</p>
       </div>
 
       <form class="chat-form" id="chat-form" autocomplete="off">
-        <label for="chat-input" class="sr-only">Tulis pesan</label>
+        <label for="chat-input" class="sr-only" data-i18n="chat.inputLabel">Tulis pesan</label>
         <input type="text" id="chat-input" placeholder="Tulis pertanyaan..." maxlength="500">
-        <button type="submit" class="chat-send" id="chat-send" aria-label="Kirim">
+        <button type="submit" class="chat-send" id="chat-send" aria-label="Kirim" data-i18n-attr="aria-label:chat.send">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7-8-1z"/></svg>
         </button>
       </form>
@@ -200,6 +204,7 @@
     </button>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="chat.js"></script>
 </body>
 </html>

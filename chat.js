@@ -4,10 +4,14 @@
 (function () {
   "use strict";
 
+  // Teks UI diambil dari i18n.js (Indonesia / English).
+  var I18N = window.JIAIS_I18N;
+  function t(key, vars) {
+    return I18N ? I18N.t(key, vars) : key;
+  }
+
   var STORAGE_KEY = "jiais-chat-history";
   var API_URL = "/api/chat";
-  var ERROR_REPLY = "Asisten tidak tersedia, silahkan menunggu beberapa saat.";
-  var GREETING = "Halo! Saya Asisten JIAIS. Ada yang bisa saya bantu seputar pendaftaran, biaya, atau kegiatan sekolah?";
   var MIN_TYPING_MS = 600; // agar indikator mengetik tidak sekadar berkedip
   var REQUEST_TIMEOUT_MS = 25000;
   var MAX_HISTORY_SENT = 20;
@@ -75,20 +79,20 @@
     var exhausted = left <= 0;
 
     quotaEl.textContent = exhausted
-      ? "Kuota hari ini: 0 dari " + DAILY_LIMIT + " pertanyaan"
-      : "Sisa kuota hari ini: " + left + " dari " + DAILY_LIMIT + " pertanyaan";
+      ? t("chat.quotaEmpty", { max: DAILY_LIMIT })
+      : t("chat.quotaLeft", { left: left, max: DAILY_LIMIT });
     quotaEl.classList.toggle("is-low", left > 0 && left <= 2);
     quotaEl.classList.toggle("is-empty", exhausted);
 
     input.disabled = exhausted;
     sendBtn.disabled = exhausted;
-    input.placeholder = exhausted ? "Kuota tanya AI hari ini habis" : "Tulis pertanyaan...";
+    input.placeholder = exhausted ? t("chat.placeholderEmpty") : t("chat.placeholder");
     form.classList.toggle("is-disabled", exhausted);
 
     limitEl.hidden = !exhausted;
-    if (exhausted && !limitEl.querySelector(".chat-wa-btn")) {
-      limitEl.appendChild(createAdminButton("", "Halo Admin JIAIS, kuota tanya Asisten AI saya hari ini sudah habis. Saya ingin bertanya:"));
-    }
+    var oldBtn = limitEl.querySelector(".chat-wa-btn");
+    if (oldBtn) oldBtn.remove(); // dibuat ulang agar ikut bahasa aktif
+    if (exhausted) limitEl.appendChild(createAdminButton("", t("chat.waQuotaEmpty")));
 
     suggestions.hidden = history.length > 0 || exhausted;
   }
@@ -138,10 +142,10 @@
 
   // Tombol WhatsApp; pesan awal berisi pertanyaan pengguna agar admin langsung paham konteksnya.
   function createAdminButton(question, customText) {
-    var text = "Halo Admin JIAIS, saya ingin bertanya";
+    var text;
     if (customText) text = customText;
-    else if (question) text += ": " + question.slice(0, 300);
-    else text += ".";
+    else if (question) text = t("chat.waAskQuestion", { question: question.slice(0, 300) });
+    else text = t("chat.waAsk") + ".";
 
     var a = document.createElement("a");
     a.className = "chat-wa-btn";
@@ -149,14 +153,16 @@
     a.target = "_blank";
     a.rel = "noopener";
     a.innerHTML =
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/></svg>' +
-      "<span>Hubungi Admin via WhatsApp</span>";
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/></svg>';
+    var label = document.createElement("span");
+    label.textContent = t("chat.adminButton");
+    a.appendChild(label);
     return a;
   }
 
   function renderAll() {
     list.innerHTML = "";
-    renderMessage({ role: "bot", text: GREETING, time: history.length ? history[0].time : Date.now() });
+    renderMessage({ role: "bot", text: t("chat.greeting"), time: history.length ? history[0].time : Date.now() });
     history.forEach(renderMessage);
     updateQuotaUI();
     scrollToBottom();
@@ -170,9 +176,8 @@
     var row = document.createElement("div");
     row.className = "msg msg-bot";
     row.id = "chat-typing";
-    row.innerHTML =
-      '<div class="bubble typing" aria-label="Asisten sedang mengetik">' +
-      "<span></span><span></span><span></span></div>";
+    row.innerHTML = '<div class="bubble typing"><span></span><span></span><span></span></div>';
+    row.firstChild.setAttribute("aria-label", t("chat.typing"));
     list.appendChild(row);
     scrollToBottom();
   }
@@ -227,7 +232,7 @@
       })
       .catch(function () {
         // Asisten tidak tersedia: tetap tawarkan jalur ke admin.
-        return { text: ERROR_REPLY, error: true, perluAdmin: true };
+        return { text: t("chat.error"), error: true, perluAdmin: true };
       })
       .finally(function () {
         clearTimeout(timer);
@@ -264,7 +269,7 @@
       .catch(function () {
         hideTyping();
         changeQuota(-1);
-        addMessage("bot", ERROR_REPLY, { error: true, perluAdmin: true, adminQuestion: text });
+        addMessage("bot", t("chat.error"), { error: true, perluAdmin: true, adminQuestion: text });
       })
       .finally(function () {
         busy = false;
@@ -277,7 +282,7 @@
   function setOpen(open) {
     panel.hidden = !open;
     toggleBtn.setAttribute("aria-expanded", String(open));
-    toggleBtn.setAttribute("aria-label", open ? "Tutup chat" : "Buka chat Asisten JIAIS");
+    toggleBtn.setAttribute("aria-label", open ? t("chat.close") : t("chat.open"));
     document.body.classList.toggle("chat-open", open);
     if (open) {
       updateQuotaUI(); // kuota bisa sudah reset bila tanggal berganti
@@ -292,8 +297,8 @@
   function setExpanded(expanded) {
     panel.classList.toggle("chat-expanded", expanded);
     expandBtn.setAttribute("aria-pressed", String(expanded));
-    expandBtn.setAttribute("aria-label", expanded ? "Perkecil jendela chat" : "Perbesar jendela chat");
-    expandBtn.title = expanded ? "Perkecil" : "Perbesar";
+    expandBtn.setAttribute("aria-label", expanded ? t("chat.shrink") : t("chat.expand"));
+    expandBtn.title = expanded ? t("chat.shrinkShort") : t("chat.expandShort");
     try {
       localStorage.setItem(EXPAND_KEY, expanded ? "1" : "0");
     } catch (e) {
@@ -348,5 +353,25 @@
     if (e.key === QUOTA_KEY && !busy) updateQuotaUI();
   });
 
+  // Label tombol yang statusnya dinamis (buka/tutup, perbesar/perkecil).
+  function refreshDynamicLabels() {
+    var expanded = panel.classList.contains("chat-expanded");
+    expandBtn.setAttribute("aria-label", expanded ? t("chat.shrink") : t("chat.expand"));
+    expandBtn.title = expanded ? t("chat.shrinkShort") : t("chat.expandShort");
+    toggleBtn.setAttribute("aria-label", panel.hidden ? t("chat.open") : t("chat.close"));
+  }
+
+  // Ganti bahasa: render ulang sapaan, tombol WA, kuota, dan label.
+  // Isi riwayat (pertanyaan & jawaban lama) tetap dalam bahasa saat ditulis.
+  if (I18N) {
+    I18N.onChange(function () {
+      if (busy) hideTyping();
+      renderAll();
+      if (busy) showTyping();
+      refreshDynamicLabels();
+    });
+  }
+
+  refreshDynamicLabels();
   renderAll();
 })();
