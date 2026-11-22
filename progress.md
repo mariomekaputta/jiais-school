@@ -15,6 +15,7 @@ Landing page satu halaman untuk sekolah fiktif **Jakarta International AI School
 | `index.html` | Header + navigasi, Hero, Tentang, Jenjang (SD/SMP/SMA), Keunggulan, CTA WhatsApp, Footer |
 | `style.css` | Variabel warna, layout grid/flex, breakpoint 900px (tablet) dan 720px (HP) |
 | `.claude/launch.json` | Konfigurasi preview: `python3 -m http.server 3000` |
+| `FAQ.md` | 20 tanya-jawab fiktif: pendaftaran, tes, biaya per jenjang, beasiswa, jam sekolah, seragam, ekskul, antar jemput, kontak |
 | `progress.md` | Dokumen ini |
 
 ## Menjalankan preview
@@ -42,3 +43,4 @@ Lalu buka http://localhost:3000.
 ## Riwayat commit
 
 - `Initial landing page JIAIS` — index.html, style.css, preview config, progress.md
+- `Add FAQ.md` — 20 tanya-jawab fiktif yang konsisten dengan landing page
