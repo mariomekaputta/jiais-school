@@ -1,0 +1,4 @@
+# Jangan pernah unggah secret ke Vercel (key diset di Environment Variables)
+.env
+.env.*
+!.env.example

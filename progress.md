@@ -21,7 +21,8 @@ Landing page satu halaman untuk sekolah fiktif **Jakarta International AI School
 | `lib/chat-core.js` | Logika chat bersama: validasi, prompt per bahasa, rate limit, panggilan Gemini. API key hanya di sini (server) |
 | `api/chat.js` | Vercel Serverless Function `POST /api/chat` |
 | `server.js` | Server lokal: sajikan `public/` (whitelist) + `POST /api/chat` |
-| `vercel.json` | Konfigurasi Vercel: `public/` sebagai output, sertakan prompt + FAQ ke function |
+| `vercel.json` | Konfigurasi Vercel: `public/` sebagai output, sertakan prompt ke function |
+| `.vercelignore` | Cegah `.env` ikut terunggah saat deploy via Vercel CLI |
 | `prompts/system-prompt.id.md` | Instruksi Asisten JIAIS bahasa Indonesia |
 | `prompts/system-prompt.en.md` | Instruksi Asisten JIAIS bahasa Inggris (menerjemahkan data FAQ berbahasa Indonesia) |
 | `FAQ.md` | 20 tanya-jawab fiktif; juga dipakai sebagai data asisten |
@@ -44,6 +45,8 @@ Server hanya listen di `127.0.0.1` (set `HOST=0.0.0.0` bila perlu diakses dari j
 1. Import repo GitHub ke Vercel, Framework Preset: **Other** (tanpa build command).
 2. Project Settings → Environment Variables → tambah `GEMINI_API_KEY` (Production, Preview).
 3. Redeploy. Vercel menyajikan `public/` sebagai website dan `api/chat.js` sebagai function.
+
+Catatan: file yang dibaca function (`FAQ.md`, `prompts/*.md`) harus dibaca dengan path literal di `lib/chat-core.js` agar ikut di-bundle Vercel. Jika prompt/FAQ tidak ditemukan, `/api/chat` membalas 503 (log `prompt_missing_<lang>`) alih-alih menjawab tanpa instruksi.
 
 Catatan: rate limit 20 req/menit per IP disimpan di memori per instance function, jadi di Vercel tidak benar-benar global. Untuk produksi, pakai store bersama (mis. Upstash Redis / Vercel KV) dan pasang budget alert di Google Cloud.
 
@@ -90,3 +93,4 @@ Catatan: rate limit 20 req/menit per IP disimpan di memori per instance function
 - `Add Indonesian/English localization for the website` — i18n.js + tombol ID/EN
 - `Add dark mode and per-language assistant prompts` — theme.js, token warna, prompt ID/EN
 - `Make project deployable on Vercel` — public/, api/chat.js, lib/chat-core.js, vercel.json
+- `Bundle prompts and FAQ into Vercel function` — path literal agar ikut di-trace, fail-safe bila prompt hilang, .vercelignore
