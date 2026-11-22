@@ -1,0 +1,13 @@
+{
+  "name": "jiais-school",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page Jakarta International AI School dengan Asisten JIAIS (Gemini)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

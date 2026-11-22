@@ -1,12 +1,16 @@
 /* Widget chat "Asisten JIAIS" — vanilla JS, tanpa framework.
-   Balasan masih dummy; ganti fungsi getReply() saat backend/AI sudah siap. */
+   Balasan diambil dari server sendiri (/api/chat), yang meneruskannya ke Gemini.
+   API key hanya ada di server; browser tidak pernah mengirim atau menerimanya. */
 (function () {
   "use strict";
 
   var STORAGE_KEY = "jiais-chat-history";
-  var DUMMY_REPLY = "Asisten segera hadir";
+  var API_URL = "/api/chat";
+  var ERROR_REPLY = "Asisten tidak tersedia, silahkan menunggu beberapa saat.";
   var GREETING = "Halo! Saya Asisten JIAIS. Ada yang bisa saya bantu seputar pendaftaran, biaya, atau kegiatan sekolah?";
-  var TYPING_DELAY_MS = 1200;
+  var MIN_TYPING_MS = 600; // agar indikator mengetik tidak sekadar berkedip
+  var REQUEST_TIMEOUT_MS = 25000;
+  var MAX_HISTORY_SENT = 20;
 
   var panel = document.getElementById("chat-panel");
   var toggleBtn = document.getElementById("chat-toggle");
@@ -91,16 +95,48 @@
   }
 
   /* ---------- Logika percakapan ---------- */
-  function addMessage(role, text) {
+  function addMessage(role, text, isError) {
     var msg = { role: role, text: text, time: Date.now() };
+    if (isError) msg.error = true; // pesan error tidak dikirim ke AI sebagai riwayat
     history.push(msg);
     saveHistory();
     renderMessage(msg);
     scrollToBottom();
   }
 
-  function getReply(/* userText */) {
-    return Promise.resolve(DUMMY_REPLY);
+  // Riwayat yang dikirim ke server: hanya role + text, tanpa pesan error.
+  function historyForRequest() {
+    return history
+      .filter(function (m) { return !m.error; })
+      .slice(-MAX_HISTORY_SENT)
+      .map(function (m) { return { role: m.role, text: m.text }; });
+  }
+
+  // Selalu resolve (tidak pernah reject): {text, error}
+  function getReply() {
+    var controller = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (controller) controller.abort(); }, REQUEST_TIMEOUT_MS);
+
+    return fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: historyForRequest() }),
+      signal: controller ? controller.signal : undefined,
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data || typeof data.reply !== "string" || !data.reply.trim()) throw new Error("empty");
+        return { text: data.reply.trim(), error: false };
+      })
+      .catch(function () {
+        return { text: ERROR_REPLY, error: true };
+      })
+      .finally(function () {
+        clearTimeout(timer);
+      });
   }
 
   function send(text) {
@@ -113,13 +149,20 @@
     input.value = "";
     showTyping();
 
-    var delay = new Promise(function (r) { setTimeout(r, TYPING_DELAY_MS); });
-    Promise.all([getReply(text), delay]).then(function (res) {
-      hideTyping();
-      addMessage("bot", res[0]);
-      busy = false;
-      input.focus();
-    });
+    var minDelay = new Promise(function (r) { setTimeout(r, MIN_TYPING_MS); });
+    Promise.all([getReply(), minDelay])
+      .then(function (res) {
+        hideTyping();
+        addMessage("bot", res[0].text, res[0].error);
+      })
+      .catch(function () {
+        hideTyping();
+        addMessage("bot", ERROR_REPLY, true);
+      })
+      .finally(function () {
+        busy = false;
+        input.focus();
+      });
   }
 
   /* ---------- Buka / tutup ---------- */

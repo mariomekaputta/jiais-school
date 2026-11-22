@@ -1,1 +1,8 @@
 .DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+node_modules/
