@@ -49,6 +49,7 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - [x] Keamanan: key tidak ada di kode front-end, Network tab, maupun git; whitelist file statis; batas ukuran request, riwayat 20 pesan, timeout 20 dtk, rate limit 20 req/menit per IP
 - [x] Error/timeout/server mati → "Asisten tidak tersedia, silahkan menunggu beberapa saat." tanpa crash (pesan error tidak dikirim ulang ke AI)
 - [x] Jawaban terstruktur dari Gemini `{reply, perlu_admin}`; bila `perlu_admin: true` (di luar topik, info tidak ada di data, butuh kepastian sekolah, ingin daftar/tur/bayar) atau asisten error, widget menampilkan tombol "Hubungi Admin via WhatsApp" dengan pesan awal berisi pertanyaan pengguna
+- [x] Kuota 5 pertanyaan per pengunjung per hari (dihitung di browser via localStorage, reset saat tanggal lokal berganti). Sisa kuota tampil di bawah kotak ketik; saat habis kotak ketik dinonaktifkan dan muncul "Kuota tanya AI hari ini habis, silakan hubungi admin" + tombol WhatsApp. Kuota dikembalikan bila asisten error; hapus riwayat tidak me-reset kuota
 - [x] Tombol perbesar/perkecil chat: mode besar minimal setengah lebar layar dan ~85% tinggi layar (desktop/tablet), pilihan diingat browser; disembunyikan di HP karena panel sudah hampir layar penuh
 
 ## Catatan / ide berikutnya
@@ -57,6 +58,7 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - Belum ada foto/gambar sekolah, form pendaftaran, peta lokasi, atau favicon.
 - System prompt: asisten hanya menjawab topik JIAIS; topik lain dibalas kalimat penolakan baku. Masih terbuka untuk review. Data sekolah diambil dari `FAQ.md`, jadi mengubah FAQ otomatis mengubah jawaban asisten (setelah server di-restart).
 - Gemini cukup sering membalas 503 (server sibuk) saat uji; pertimbangkan retry otomatis 1x di server.
+- Kuota harian hanya di browser, mudah dilewati (hapus data situs / mode incognito / panggil API langsung). Batas yang benar-benar melindungi biaya tetap harus di server.
 - Rate limit masih in-memory; untuk deploy multi-instance perlu store bersama (mis. Redis) dan logging/monitoring biaya token.
 - Angka statistik (rasio guru 1:15, dll.) adalah contoh fiktif.
 
@@ -70,3 +72,4 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - `Add expand toggle to chat widget` — mode besar minimal setengah layar
 - `Restrict assistant to JIAIS topics only` — tolak topik lain (politik, olahraga umum, dll.)
 - `Add perlu_admin flag and WhatsApp handoff button` — structured output Gemini + tombol WA di widget
+- `Add daily 5-question quota per visitor` — kuota harian di browser + tampilan sisa kuota

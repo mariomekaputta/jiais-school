@@ -808,6 +808,54 @@ a {
   height: 18px;
 }
 
+/* Kuota harian */
+.chat-quota {
+  margin: 0;
+  padding: 0 12px 10px;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+.chat-quota.is-low {
+  color: #b45309;
+}
+
+.chat-quota.is-empty {
+  color: #b91c1c;
+}
+
+.chat-limit {
+  margin: 0 12px;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+  background: #fef2f2;
+  text-align: center;
+}
+
+.chat-limit[hidden] {
+  display: none;
+}
+
+.chat-limit p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.chat-form.is-disabled input {
+  background: #f1f5f9;
+  color: var(--text-soft);
+  cursor: not-allowed;
+}
+
+.chat-send:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
 /* Tombol perbesar: ikon berganti sesuai mode */
 .chat-expand-btn .icon-shrink,
 .chat-expanded .chat-expand-btn .icon-expand {
