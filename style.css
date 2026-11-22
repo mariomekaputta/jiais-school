@@ -777,6 +777,36 @@ a {
   }
 }
 
+/* Tombol perbesar: ikon berganti sesuai mode */
+.chat-expand-btn .icon-shrink,
+.chat-expanded .chat-expand-btn .icon-expand {
+  display: none;
+}
+
+.chat-expanded .chat-expand-btn .icon-shrink {
+  display: block;
+}
+
+/* Mode besar: minimal setengah lebar layar, hampir setinggi layar */
+.chat-panel {
+  transition: width 0.25s ease, height 0.25s ease;
+}
+
+.chat-panel.chat-expanded {
+  width: min(max(50vw, 360px), calc(100vw - 48px));
+  height: calc(100vh - 124px);
+}
+
+.chat-expanded .msg {
+  max-width: 70%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel {
+    transition: none;
+  }
+}
+
 /* Chat di HP: panel hampir layar penuh */
 @media (max-width: 480px) {
   .chat-fab {
@@ -784,11 +814,17 @@ a {
     bottom: 16px;
   }
 
-  .chat-panel {
+  .chat-panel,
+  .chat-panel.chat-expanded {
     right: 8px;
     left: 8px;
     bottom: 88px;
     width: auto;
     height: calc(100dvh - 104px);
+  }
+
+  /* Di HP panel sudah hampir layar penuh, jadi tombol perbesar disembunyikan */
+  .chat-expand-btn {
+    display: none;
   }
 }

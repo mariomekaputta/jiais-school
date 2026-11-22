@@ -48,6 +48,7 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - [x] Chat terhubung ke Gemini lewat proxy server; riwayat dikirim agar bisa tanya lanjutan
 - [x] Keamanan: key tidak ada di kode front-end, Network tab, maupun git; whitelist file statis; batas ukuran request, riwayat 20 pesan, timeout 20 dtk, rate limit 20 req/menit per IP
 - [x] Error/timeout/server mati → "Asisten tidak tersedia, silahkan menunggu beberapa saat." tanpa crash (pesan error tidak dikirim ulang ke AI)
+- [x] Tombol perbesar/perkecil chat: mode besar minimal setengah lebar layar dan ~85% tinggi layar (desktop/tablet), pilihan diingat browser; disembunyikan di HP karena panel sudah hampir layar penuh
 
 ## Catatan / ide berikutnya
 
@@ -64,3 +65,4 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - `Add floating chat widget` — widget Asisten JIAIS dengan balasan dummy
 - `Use relative path in preview config` — hapus path lokal sebelum repo publik
 - `Connect Asisten JIAIS to Gemini via server proxy` — server.js, system prompt, chat.js memanggil /api/chat
+- `Add expand toggle to chat widget` — mode besar minimal setengah layar

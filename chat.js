@@ -16,6 +16,8 @@
   var toggleBtn = document.getElementById("chat-toggle");
   var closeBtn = document.getElementById("chat-close");
   var clearBtn = document.getElementById("chat-clear");
+  var expandBtn = document.getElementById("chat-expand");
+  var EXPAND_KEY = "jiais-chat-expanded";
   var list = document.getElementById("chat-messages");
   var suggestions = document.getElementById("chat-suggestions");
   var form = document.getElementById("chat-form");
@@ -177,6 +179,30 @@
     } else {
       toggleBtn.focus();
     }
+  }
+
+  /* ---------- Perbesar / perkecil ---------- */
+  function setExpanded(expanded) {
+    panel.classList.toggle("chat-expanded", expanded);
+    expandBtn.setAttribute("aria-pressed", String(expanded));
+    expandBtn.setAttribute("aria-label", expanded ? "Perkecil jendela chat" : "Perbesar jendela chat");
+    expandBtn.title = expanded ? "Perkecil" : "Perbesar";
+    try {
+      localStorage.setItem(EXPAND_KEY, expanded ? "1" : "0");
+    } catch (e) {
+      /* abaikan */
+    }
+    scrollToBottom();
+  }
+
+  expandBtn.addEventListener("click", function () {
+    setExpanded(!panel.classList.contains("chat-expanded"));
+  });
+
+  try {
+    if (localStorage.getItem(EXPAND_KEY) === "1") setExpanded(true);
+  } catch (e) {
+    /* abaikan */
   }
 
   /* ---------- Event ---------- */
