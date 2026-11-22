@@ -25,6 +25,8 @@
         "Jakarta International AI School — sekolah SD, SMP, dan SMA dengan kurikulum internasional yang membekali siswa dengan literasi AI sejak dini.",
 
       "lang.label": "Pilih bahasa",
+      "theme.toDark": "Aktifkan mode gelap",
+      "theme.toLight": "Aktifkan mode terang",
 
       "nav.label": "Navigasi utama",
       "nav.toggle": "Buka menu",
@@ -118,6 +120,8 @@
         "Jakarta International AI School — primary, middle, and high school with an international curriculum that builds AI literacy from an early age.",
 
       "lang.label": "Choose language",
+      "theme.toDark": "Switch to dark mode",
+      "theme.toLight": "Switch to light mode",
 
       "nav.label": "Main navigation",
       "nav.toggle": "Open menu",

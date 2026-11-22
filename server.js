@@ -48,20 +48,37 @@ if (!API_KEY) {
   console.warn("[peringatan] GEMINI_API_KEY belum diset. Chat akan membalas 'Asisten tidak tersedia'.");
 }
 
-/* ---------- System prompt = instruksi + data sekolah dari FAQ.md ---------- */
-function buildSystemPrompt() {
-  const read = (f) => {
-    try {
-      return fs.readFileSync(path.join(ROOT, f), "utf8");
-    } catch {
-      return "";
-    }
-  };
-  const instructions = read("prompts/system-prompt.md");
-  const faq = read("FAQ.md");
-  return `${instructions}\n\n---\n\n# DATA RESMI SEKOLAH (sumber kebenaran)\n\n${faq}`;
+/* ---------- System prompt per bahasa = instruksi + data sekolah dari FAQ.md ---------- */
+const DEFAULT_LANG = "id";
+const DATA_HEADINGS = {
+  id: "# DATA RESMI SEKOLAH (sumber kebenaran)",
+  en: "# OFFICIAL SCHOOL DATA (source of truth, written in Indonesian)",
+};
+
+function readFile(f) {
+  try {
+    return fs.readFileSync(path.join(ROOT, f), "utf8");
+  } catch {
+    return "";
+  }
 }
-const SYSTEM_PROMPT = buildSystemPrompt();
+
+function buildSystemPrompts() {
+  const faq = readFile("FAQ.md");
+  const prompts = {};
+  for (const lang of Object.keys(DATA_HEADINGS)) {
+    const instructions = readFile(`prompts/system-prompt.${lang}.md`);
+    if (!instructions) console.warn(`[peringatan] prompts/system-prompt.${lang}.md tidak ditemukan`);
+    prompts[lang] = `${instructions}\n\n---\n\n${DATA_HEADINGS[lang]}\n\n${faq}`;
+  }
+  return prompts;
+}
+const SYSTEM_PROMPTS = buildSystemPrompts();
+
+// Hanya bahasa yang dikenal; selain itu pakai bahasa Indonesia.
+function pickLang(value) {
+  return Object.prototype.hasOwnProperty.call(SYSTEM_PROMPTS, value) ? value : DEFAULT_LANG;
+}
 
 /* ---------- File statis: whitelist eksplisit ---------- */
 // Hanya file ini yang bisa diakses browser. .env, server.js, prompt, dll. tidak pernah disajikan.
@@ -70,6 +87,7 @@ const STATIC_FILES = {
   "/index.html": { file: "index.html", type: "text/html; charset=utf-8" },
   "/style.css": { file: "style.css", type: "text/css; charset=utf-8" },
   "/i18n.js": { file: "i18n.js", type: "text/javascript; charset=utf-8" },
+  "/theme.js": { file: "theme.js", type: "text/javascript; charset=utf-8" },
   "/chat.js": { file: "chat.js", type: "text/javascript; charset=utf-8" },
 };
 
@@ -155,7 +173,7 @@ function readJson(req) {
   });
 }
 
-async function askGemini(contents) {
+async function askGemini(contents, lang) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), LIMITS.timeoutMs);
   try {
@@ -164,7 +182,7 @@ async function askGemini(contents) {
       signal: controller.signal,
       headers: { "Content-Type": "application/json", "x-goog-api-key": API_KEY },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPTS[lang] }] },
         contents,
         generationConfig: {
           maxOutputTokens: 1024,
@@ -192,7 +210,7 @@ async function askGemini(contents) {
 const RESPONSE_SCHEMA = {
   type: "OBJECT",
   properties: {
-    reply: { type: "STRING", description: "Jawaban untuk pengguna, teks biasa berbahasa Indonesia." },
+    reply: { type: "STRING", description: "Jawaban untuk pengguna, teks biasa, dalam bahasa yang ditentukan instruksi sistem." },
     perlu_admin: {
       type: "BOOLEAN",
       description: "true jika pertanyaan tidak bisa dijawab tuntas dan pengguna perlu menghubungi admin WhatsApp.",
@@ -231,7 +249,8 @@ async function handleChat(req, res) {
   if (!contents) return send(res, 400, { error: "bad_request" });
 
   try {
-    const { reply, perlu_admin } = await askGemini(contents);
+    const lang = pickLang(body && body.lang);
+    const { reply, perlu_admin } = await askGemini(contents, lang);
     send(res, 200, { reply, perlu_admin });
   } catch (e) {
     // Log hanya jenis error, tanpa key dan tanpa isi percakapan.

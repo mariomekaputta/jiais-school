@@ -219,7 +219,8 @@
     return fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: historyForRequest() }),
+      // lang: server memilih system prompt ID/EN sesuai bahasa website yang aktif
+      body: JSON.stringify({ messages: historyForRequest(), lang: I18N ? I18N.lang() : "id" }),
       signal: controller ? controller.signal : undefined,
     })
       .then(function (r) {
