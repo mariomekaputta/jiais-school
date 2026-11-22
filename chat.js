@@ -11,6 +11,7 @@
   var MIN_TYPING_MS = 600; // agar indikator mengetik tidak sekadar berkedip
   var REQUEST_TIMEOUT_MS = 25000;
   var MAX_HISTORY_SENT = 20;
+  var WA_NUMBER = "6281200002026";
 
   var panel = document.getElementById("chat-panel");
   var toggleBtn = document.getElementById("chat-toggle");
@@ -64,8 +65,26 @@
     time.textContent = formatTime(msg.time);
 
     row.appendChild(bubble);
+    if (msg.role === "bot" && msg.perluAdmin) row.appendChild(createAdminButton(msg.adminQuestion));
     row.appendChild(time);
     list.appendChild(row);
+  }
+
+  // Tombol WhatsApp; pesan awal berisi pertanyaan pengguna agar admin langsung paham konteksnya.
+  function createAdminButton(question) {
+    var text = "Halo Admin JIAIS, saya ingin bertanya";
+    if (question) text += ": " + question.slice(0, 300);
+    else text += ".";
+
+    var a = document.createElement("a");
+    a.className = "chat-wa-btn";
+    a.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(text);
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/></svg>' +
+      "<span>Hubungi Admin via WhatsApp</span>";
+    return a;
   }
 
   function renderAll() {
@@ -97,9 +116,15 @@
   }
 
   /* ---------- Logika percakapan ---------- */
-  function addMessage(role, text, isError) {
+  // opts: { error, perluAdmin, adminQuestion }
+  function addMessage(role, text, opts) {
+    opts = opts || {};
     var msg = { role: role, text: text, time: Date.now() };
-    if (isError) msg.error = true; // pesan error tidak dikirim ke AI sebagai riwayat
+    if (opts.error) msg.error = true; // pesan error tidak dikirim ke AI sebagai riwayat
+    if (opts.perluAdmin) {
+      msg.perluAdmin = true;
+      msg.adminQuestion = opts.adminQuestion || "";
+    }
     history.push(msg);
     saveHistory();
     renderMessage(msg);
@@ -131,10 +156,11 @@
       })
       .then(function (data) {
         if (!data || typeof data.reply !== "string" || !data.reply.trim()) throw new Error("empty");
-        return { text: data.reply.trim(), error: false };
+        return { text: data.reply.trim(), error: false, perluAdmin: data.perlu_admin === true };
       })
       .catch(function () {
-        return { text: ERROR_REPLY, error: true };
+        // Asisten tidak tersedia: tetap tawarkan jalur ke admin.
+        return { text: ERROR_REPLY, error: true, perluAdmin: true };
       })
       .finally(function () {
         clearTimeout(timer);
@@ -155,11 +181,15 @@
     Promise.all([getReply(), minDelay])
       .then(function (res) {
         hideTyping();
-        addMessage("bot", res[0].text, res[0].error);
+        addMessage("bot", res[0].text, {
+          error: res[0].error,
+          perluAdmin: res[0].perluAdmin,
+          adminQuestion: text,
+        });
       })
       .catch(function () {
         hideTyping();
-        addMessage("bot", ERROR_REPLY, true);
+        addMessage("bot", ERROR_REPLY, { error: true, perluAdmin: true, adminQuestion: text });
       })
       .finally(function () {
         busy = false;

@@ -165,7 +165,12 @@ async function askGemini(contents) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
         contents,
-        generationConfig: { maxOutputTokens: 1024 },
+        generationConfig: {
+          maxOutputTokens: 1024,
+          // Structured output: Gemini wajib membalas JSON {reply, perlu_admin}
+          responseMimeType: "application/json",
+          responseSchema: RESPONSE_SCHEMA,
+        },
       }),
     });
     if (!r.ok) throw new Error(`gemini_http_${r.status}`);
@@ -177,9 +182,35 @@ async function askGemini(contents) {
       .join("")
       .trim();
     if (!text) throw new Error(`gemini_empty_${data?.candidates?.[0]?.finishReason || "unknown"}`);
-    return text;
+    return parseStructuredReply(text);
   } finally {
     clearTimeout(timer);
+  }
+}
+
+const RESPONSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    reply: { type: "STRING", description: "Jawaban untuk pengguna, teks biasa berbahasa Indonesia." },
+    perlu_admin: {
+      type: "BOOLEAN",
+      description: "true jika pertanyaan tidak bisa dijawab tuntas dan pengguna perlu menghubungi admin WhatsApp.",
+    },
+  },
+  required: ["reply", "perlu_admin"],
+  propertyOrdering: ["reply", "perlu_admin"],
+};
+
+// Ubah teks JSON dari Gemini menjadi {reply, perlu_admin} yang tervalidasi.
+function parseStructuredReply(text) {
+  try {
+    const obj = JSON.parse(text);
+    const reply = typeof obj.reply === "string" ? obj.reply.trim() : "";
+    if (!reply) throw new Error("gemini_bad_json");
+    return { reply, perlu_admin: obj.perlu_admin === true };
+  } catch {
+    // Model tidak mengikuti format: jangan tampilkan JSON mentah, anggap gagal.
+    throw new Error("gemini_bad_json");
   }
 }
 
@@ -199,8 +230,8 @@ async function handleChat(req, res) {
   if (!contents) return send(res, 400, { error: "bad_request" });
 
   try {
-    const reply = await askGemini(contents);
-    send(res, 200, { reply });
+    const { reply, perlu_admin } = await askGemini(contents);
+    send(res, 200, { reply, perlu_admin });
   } catch (e) {
     // Log hanya jenis error, tanpa key dan tanpa isi percakapan.
     console.error(`[chat] gagal: ${e.name === "AbortError" ? "timeout" : e.message}`);
