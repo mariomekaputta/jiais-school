@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jiais-school",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "3000", "--directory", "/Users/marioekaputta/Desktop/Bootcamp/demo/jiais-school"],
+      "port": 3000
+    }
+  ]
+}
