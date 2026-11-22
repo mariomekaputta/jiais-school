@@ -54,7 +54,7 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 
 - Menu HP tidak otomatis menutup setelah link diklik (keterbatasan pendekatan tanpa JS).
 - Belum ada foto/gambar sekolah, form pendaftaran, peta lokasi, atau favicon.
-- System prompt menunggu review. Data sekolah diambil dari `FAQ.md`, jadi mengubah FAQ otomatis mengubah jawaban asisten (setelah server di-restart).
+- System prompt: asisten hanya menjawab topik JIAIS; topik lain dibalas kalimat penolakan baku. Masih terbuka untuk review. Data sekolah diambil dari `FAQ.md`, jadi mengubah FAQ otomatis mengubah jawaban asisten (setelah server di-restart).
 - Rate limit masih in-memory; untuk deploy multi-instance perlu store bersama (mis. Redis) dan logging/monitoring biaya token.
 - Angka statistik (rasio guru 1:15, dll.) adalah contoh fiktif.
 
@@ -66,3 +66,4 @@ Lalu buka http://localhost:3000. Server hanya listen di `127.0.0.1` (set `HOST=0
 - `Use relative path in preview config` — hapus path lokal sebelum repo publik
 - `Connect Asisten JIAIS to Gemini via server proxy` — server.js, system prompt, chat.js memanggil /api/chat
 - `Add expand toggle to chat widget` — mode besar minimal setengah layar
+- `Restrict assistant to JIAIS topics only` — tolak topik lain (politik, olahraga umum, dll.)
